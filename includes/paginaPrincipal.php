@@ -39,6 +39,12 @@ function ManagerPlugins_Display_Page() {
         .pluginUnico{
             color: var(--pi-text);
         }
+        .pluginActivo{
+            color: greenyellow;
+        }
+        .desactivado{
+            display: none;
+        }
     </style>
     <div class="wrap">
         <h1>Esta es la página principal del plugin</h1>
@@ -56,6 +62,7 @@ function ManagerPlugins_Display_Page() {
                     <div class="pluginUnico">
                         <?php echo('<h2 class="nombrePlugin">'.$plugin['name'].'</h2>'.$plugin['description']) ?>
                     </div>
+                    <p id="<?php echo($plugin['slug']) ?>" class="pluginActivo desactivado">¡Plugin activado!</p>
                 </label>
                 
                 <?php

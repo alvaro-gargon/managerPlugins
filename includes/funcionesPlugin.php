@@ -23,12 +23,19 @@ add_action('admin_enqueue_scripts', function() {
     );
 
     // Pasar nonce al JS
-   wp_localize_script('plugin-js', 'plugin', [
-    'ajax_url' => admin_url('admin-ajax.php'),
-    'nonce'    => wp_create_nonce('activar_plugin_nonce'),
+    wp_localize_script('plugin-js', 'plugin', [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('activar_plugin_nonce'),
+        'plugins'  => array_map(function($file, $data) {
+            return [
+                'file'   => $file,                    // 'really-simple-ssl/really-simple-ssl.php'
+                'slug'   => explode('/', $file)[0],   // 'really-simple-ssl'
+                'name'   => $data['Name'],            // 'Really Simple SSL'
+                'active' => is_plugin_active($file),  // true/false
+            ];
+        }, array_keys(get_plugins()), get_plugins())
     ]);
 });
-
 add_action('wp_ajax_activar_plugin', function() {
     check_ajax_referer('activar_plugin_nonce', 'nonce');
 
@@ -44,4 +51,21 @@ add_action('wp_ajax_activar_plugin', function() {
     }
 
     wp_send_json_success('Plugin activado');
+});
+
+add_action('wp_ajax_desactivar_plugin', function() {
+    check_ajax_referer('activar_plugin_nonce', 'nonce');
+
+    if (!current_user_can('activate_plugins')) {
+        wp_send_json_error('Sin permisos');
+    }
+
+    $plugin = sanitize_text_field($_POST['plugin']);
+
+    if (!file_exists(WP_PLUGIN_DIR . '/' . $plugin)) {
+        wp_send_json_error('Archivo no encontrado: ' . $plugin);
+    }
+
+    deactivate_plugins($plugin);
+    wp_send_json_success('Plugin desactivado');
 });
