@@ -12,8 +12,28 @@
                 .then(() => console.log('¡Listo!'))
                 .catch(console.error);
             });
-
         })
+
+
+        botonDesinstalar.addEventListener('click', () => {
+            var seleccionados = [...document.querySelectorAll('.pluginCheckbox:checked')]
+                .map(cb => cb.value); // cb.value debería ser el slug
+
+            seleccionados.forEach(slug => {
+                // ✅ Buscar el file real en vez de construirlo con slug/slug.php
+                const pluginData = plugin.plugins.find(p => p.slug === slug);
+
+                if (!pluginData) {
+                    console.error('Plugin no encontrado:', slug);
+                    return;
+                }
+
+                desactivarYDesinstalar(pluginData.file)
+                    .then(() => console.log('¡Listo!', slug))
+                    .catch(console.error);
+            });
+            
+        });
 
         async function activarPlugin(pluginFile) {
             console.log("He entrado a la funcion de activar")
@@ -48,4 +68,45 @@
             const pluginFile = decodeURIComponent(url.searchParams.get('plugin'));
             console.log(pluginFile)
             await activarPlugin(pluginFile);
+            checkboxes=document.querySelectorAll('.pluginCheckbox:checked')
+            await checkboxes.forEach(checkbox=>{
+                checkbox.checked=false
+            })
+        }
+
+        async function desactivarPlugin(pluginFile) {
+            const body = new FormData();
+            body.append('action', 'desactivar_plugin');
+            body.append('plugin', pluginFile);
+            body.append('nonce', plugin.nonce);
+
+            const res = await fetch(plugin.ajax_url, { method: 'POST', body });
+            const data = await res.json();
+
+            if (!data.success) throw new Error(data.data);
+        }
+
+        function desinstalarPlugin(pluginFile) {
+            return new Promise((resolve, reject) => {
+                wp.updates.deletePlugin({
+                    plugin: pluginFile,  // 'carpeta/archivo.php'
+                    slug: pluginFile.split('/')[0],
+                    success: resolve,
+                    error: reject
+                });
+            });
+        }
+
+        async function desactivarYDesinstalar(pluginFile) {
+            // 1. Desactivar primero (obligatorio antes de eliminar)
+            await desactivarPlugin(pluginFile);
+            console.log('Plugin desactivado');
+
+            // 2. Desinstalar con wp.updates
+            await desinstalarPlugin(pluginFile);
+            console.log('Plugin eliminado');
+            checkboxes=document.querySelectorAll('.pluginCheckbox:checked')
+            await checkboxes.forEach(checkbox=>{
+                checkbox.checked=false
+            })
         }
