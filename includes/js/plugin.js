@@ -1,34 +1,49 @@
         var botonInstalar=document.getElementById('instalarTodos')
         var botonDesinstalar=document.getElementById('desinstalarTodos')
-        var seleccionados= [...document.querySelectorAll('.pluginCheckbox:checked')].map(cb=>cb.value)
         var todos=[...document.querySelectorAll('.pluginCheckbox')].map(cb=>cb.value)
-        function activadoOno(todos) {
-            todos.forEach(slug =>{
+        async function activadoOno(todos) {
+            for (const slug of todos) {  // Cambié forEach por for...of para que espere
                 const p = plugin.plugins.find(p => p.slug === slug);
-                if(p.active){
-                    let mensaje=document.getElementById(slug)
-                    mensaje.classList.remove("desactivado")
+                
+                // Solo proceder si p está definido
+                if (p) {
+                    let mensaje = document.getElementById(slug);
+
+                    if (p.active) {
+                        if (mensaje) {
+                            mensaje.classList.remove("desactivado");
+                        }
+                    } else {
+                        if (mensaje) {
+                            mensaje.classList.add("desactivado");
+                        }
+                    }
                 }
-            })
+            }
+            console.log(todos)
         }
         activadoOno(todos)
 
 
         botonInstalar.addEventListener('click',()=>{
+            let seleccionados= [...document.querySelectorAll('.pluginCheckbox:checked')].map(cb=>cb.value)
             console.log("He entrado al boton")    
             console.log("Los seleccioados:")
             console.log(seleccionados)
             seleccionados.forEach(slug => {
                 console.log("He entrado al for each")
                 instalarYActivar(slug)
-                .then(() => console.log('¡Listo!'))
+                .then(() =>{
+                    activadoOno(todos) 
+                    console.log('¡Listo!')}
+                )
                 .catch(console.error);
             });
         })
 
 
         botonDesinstalar.addEventListener('click', () => {
-            var seleccionados = [...document.querySelectorAll('.pluginCheckbox:checked')]
+            let seleccionados = [...document.querySelectorAll('.pluginCheckbox:checked')]
                 .map(cb => cb.value); // cb.value debería ser el slug
 
             seleccionados.forEach(slug => {
@@ -41,13 +56,15 @@
                 }
 
                 desactivarYDesinstalar(pluginData.file)
-                    .then(() => console.log('¡Listo!', slug))
+                    .then(() =>{
+                        activadoOno(todos) 
+                        console.log('¡Listo!')}
+                    )
                     .catch(console.error);
             });
-            
         });
 
-        async function activarPlugin(pluginFile,mensaje) {
+        async function activarPlugin(pluginFile) {
             console.log("He entrado a la funcion de activar")
             const body = new FormData();
             body.append('action', 'activar_plugin');
@@ -78,11 +95,13 @@
             const url = new URL(installData.activateUrl);
             const pluginFile = decodeURIComponent(url.searchParams.get('plugin'));
             console.log(pluginFile)
-            await activarPlugin(pluginFile,mensaje);
+            await activarPlugin(pluginFile);
             checkboxes=document.querySelectorAll('.pluginCheckbox:checked')
             await checkboxes.forEach(checkbox=>{
                 checkbox.checked=false
+                
             })
+            await activadoOno(todos)
         }
 
         async function desactivarPlugin(pluginFile) {
@@ -91,10 +110,20 @@
             body.append('plugin', pluginFile);
             body.append('nonce', plugin.nonce);
 
-            const res = await fetch(plugin.ajax_url, { method: 'POST', body });
-            const data = await res.json();
+            try {
+                const res = await fetch(plugin.ajax_url, { method: 'POST', body });
+                const data = await res.json();
 
-            if (!data.success) throw new Error(data.data);
+                if (!data.success) {
+                    console.log('Error al desactivar el plugin:', data.data);
+                    return false;  // Si la desactivación falla, devolvemos false
+                }
+
+                return true;  // Si todo sale bien, devolvemos true
+            } catch (error) {
+                console.error('Error en la solicitud para desactivar el plugin:', error);
+                return false;  // Si ocurre un error en la solicitud, devolvemos false
+            }
         }
 
         function desinstalarPlugin(pluginFile) {
@@ -110,14 +139,27 @@
 
         async function desactivarYDesinstalar(pluginFile) {
             // 1. Desactivar primero (obligatorio antes de eliminar)
-            await desactivarPlugin(pluginFile);
+            const desactivado = await desactivarPlugin(pluginFile);
+            if (!desactivado) {
+                console.log('El plugin ya estaba desactivado o hubo un problema');
+                return;  // Si no se puede desactivar, salimos de la función
+            }
+
             console.log('Plugin desactivado');
 
             // 2. Desinstalar con wp.updates
-            await desinstalarPlugin(pluginFile);
-            console.log('Plugin eliminado');
-            checkboxes=document.querySelectorAll('.pluginCheckbox:checked')
-            await checkboxes.forEach(checkbox=>{
-                checkbox.checked=false
-            })
+            try {
+                await desinstalarPlugin(pluginFile);
+                console.log('Plugin eliminado');
+            } catch (error) {
+                console.log('Hubo un error al desinstalar el plugin:', error);
+                return;  // Si no se puede desinstalar, salimos de la función
+            }
+
+            // 3. Actualizar los checkboxes y ejecutar `activadoOno`
+            const checkboxes = document.querySelectorAll('.pluginCheckbox:checked');
+            for (const checkbox of checkboxes) {
+                checkbox.checked = false;  // Desmarcar checkbox
+            }
+            await activadoOno(todos);
         }
