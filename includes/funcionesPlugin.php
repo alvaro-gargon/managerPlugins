@@ -26,6 +26,7 @@ add_action('admin_enqueue_scripts', function() {
     wp_localize_script('plugin-js', 'plugin', [
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('activar_plugin_nonce'),
+        'rest_nonce' => wp_create_nonce('wp_rest'),
         'plugins'  => array_map(function($file, $data) {
             return [
                 'file'   => $file,                    // 'really-simple-ssl/really-simple-ssl.php'
