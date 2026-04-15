@@ -73,12 +73,12 @@ function ManagerPlugins_Display_Page() {
 
         /* Estilo para el color rojo (desinstalado) */
         .cajaDesinstaladoCodigo {
-            background-color: red; /* Rojo para desinstalado */
+            background-color: black; /* Rojo para desinstalado */
         }
 
         /* Estilo para el color negro (desactivado) */
         .cajaDesactivadoCodigo {
-            background-color: black; /* Negro para desactivado */
+            background-color: red; /* Negro para desactivado */
         }
 
         /* Estilo para el color verde (activado) */
@@ -94,12 +94,12 @@ function ManagerPlugins_Display_Page() {
 
         /* Estilo para el párrafo de "desinstalado" */
         .parrafoDesinstalado {
-            color: red; /* Texto rojo para desinstalado */
+            color: black; /* Texto rojo para desinstalado */
         }
 
         /* Estilo para el párrafo de "desactivado" */
         .parrafoDesactivado {
-            color: black; /* Texto negro para desactivado */
+            color: red; /* Texto negro para desactivado */
         }
 
         /* Estilo para el párrafo de "activado" */
@@ -120,6 +120,13 @@ function ManagerPlugins_Display_Page() {
         #desinstalarTodos{
             height: 30px;
             margin-left: 5px;
+        }
+        .activado{
+            background-color: darkgreen;
+            
+        }
+        .instalado{
+            background-color: darkred;
         }
     </style>
     <div class="wrap">

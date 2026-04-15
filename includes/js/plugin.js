@@ -13,6 +13,8 @@
                     if (p.active) {
                         if (mensaje) {
                             mensaje.classList.remove("desactivado");
+                            padre=mensaje.parentElement;
+                            padre.classList.add("activado")
                         }
                     } else {
                         if (mensaje) {
