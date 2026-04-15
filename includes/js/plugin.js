@@ -9,16 +9,16 @@
                 // Solo proceder si p está definido
                 if (p) {
                     let mensaje = document.getElementById(slug);
-
+                    let padre=mensaje.parentElement;
                     if (p.active) {
                         if (mensaje) {
                             mensaje.classList.remove("desactivado");
-                            padre=mensaje.parentElement;
                             padre.classList.add("activado")
                         }
                     } else {
-                        if (mensaje) {
-                            mensaje.classList.add("desactivado");
+                        if (p) {
+                            // mensaje.classList.add("desactivado");
+                            padre.classList.add("instalado");
                         }
                     }
                 }
@@ -43,6 +43,7 @@
             }
 
             await activadoOno(todos);
+            location.reload();
         });
 
         botonActivar.addEventListener('click', async () => {
@@ -62,6 +63,7 @@
             }
 
             await activadoOno(todos);
+            location.reload();
         });
 
 
@@ -87,6 +89,7 @@
             }
 
             await activadoOno(todos);
+            location.reload();
         });
 
         async function obtenerPluginFile(slug) {
