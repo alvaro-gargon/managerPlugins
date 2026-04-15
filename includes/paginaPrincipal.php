@@ -45,6 +45,89 @@ function ManagerPlugins_Display_Page() {
         .desactivado{
             display: none;
         }
+        /* 
+        ----------------------------------------------------------------------------
+        */
+        /* Estilos generales para el contenedor */
+        .codigoColores {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: 20px;
+            display: flex;
+            gap: 10px; /* Espacio entre las filas */
+        }
+
+        /* Estilo de las cajas de colores */
+        .cajaCodigo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Estilo de la caja de color (el div dentro de .cajaCodigo) */
+        .cajaColor {
+            width: 30px;
+            height: 30px;
+            border: 2px solid black;
+        }
+
+        /* Estilo para el color rojo (desinstalado) */
+        .cajaDesinstaladoCodigo {
+            background-color: black; /* Rojo para desinstalado */
+        }
+
+        /* Estilo para el color negro (desactivado) */
+        .cajaDesactivadoCodigo {
+            background-color: red; /* Negro para desactivado */
+        }
+
+        /* Estilo para el color verde (activado) */
+        .cajaActivadoCodigo {
+            background-color: green; /* Verde para activado */
+        }
+
+        /* Estilo para los párrafos */
+        p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Estilo para el párrafo de "desinstalado" */
+        .parrafoDesinstalado {
+            color: black; /* Texto rojo para desinstalado */
+        }
+
+        /* Estilo para el párrafo de "desactivado" */
+        .parrafoDesactivado {
+            color: red; /* Texto negro para desactivado */
+        }
+
+        /* Estilo para el párrafo de "activado" */
+        .parrafoActivado {
+            color: green; /* Texto verde para activado */
+        }
+        #botonesYcodigos{
+            display: flex;
+            align-items: center;
+        }
+        #instalarTodos{
+            height: 30px;
+        }
+        #activarSeleccionados{
+            height: 30px;
+            margin-left: 5px;
+        }
+        #desinstalarTodos{
+            height: 30px;
+            margin-left: 5px;
+        }
+        .activado{
+            background-color: darkgreen;
+            
+        }
+        .instalado{
+            background-color: darkred;
+        }
     </style>
     <div class="wrap">
         <h1>Esta es la página principal del plugin</h1>
@@ -52,8 +135,26 @@ function ManagerPlugins_Display_Page() {
         <?php 
             $plugins=getPlugins();
             ?>
-            <button id="instalarTodos">Instalar seleccionados</button>
-            <button id="desinstalarTodos">Desinstalar seleccionados</button>
+            <div id="botonesYcodigos">
+                <button id="instalarTodos">Instalar seleccionados</button>
+                <button id="activarSeleccionados">Activar seleccionados</button>
+                <button id="desinstalarTodos">Desinstalar seleccionados</button>
+                <div class="codigoColores">
+                    <div class="cajaCodigo">
+                        <div class="cajaColor cajaDesinstaladoCodigo"></div>
+                        <p class="parrafoDesinstalado">Plugin desinstalado</p>
+                    </div>
+                    <div class="cajaCodigo">
+                        <div class="cajaColor cajaDesactivadoCodigo"></div>
+                        <p class="parrafoDesactivado">Plugin desactivado</p>
+                    </div>
+                    <div class="cajaCodigo">
+                        <div class="cajaColor cajaActivadoCodigo"></div>
+                        <p class="parrafoActivado">Plugin activado</p>
+                    </div>
+                </div>
+            </div>
+            
             <?php
             foreach($plugins as $plugin){
                 ?>
