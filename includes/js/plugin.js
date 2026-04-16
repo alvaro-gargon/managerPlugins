@@ -1,7 +1,25 @@
+document.addEventListener("DOMContentLoaded", function() {
         var botonInstalar=document.getElementById('instalarTodos')
         var botonDesinstalar=document.getElementById('desinstalarTodos')
         var botonActivar=document.getElementById('activarSeleccionados')
         var todos=[...document.querySelectorAll('.pluginCheckbox')].map(cb=>cb.value)
+
+        const mostrarLoader=()=>{
+            console.log("Funcion mostarLoader")
+            const loader=document.getElementById("loaderPagina");
+            if(loader){
+                loader.classList.add("mostrarLoader");
+            }  
+        }
+
+        const ocultarLoader=()=>{
+            console.log("Funcion mostarLoader")
+            const loader=document.getElementById("loaderPagina");
+            if (loader) {
+                loader.classList.remove("mostrarLoader");
+            }
+        }
+
         async function activadoOno(todos) {
             for (const slug of todos) {  // Cambié forEach por for...of para que espere
                 const p = plugin.plugins.find(p => p.slug === slug);
@@ -9,16 +27,16 @@
                 // Solo proceder si p está definido
                 if (p) {
                     let mensaje = document.getElementById(slug);
-
+                    let padre=mensaje.parentElement;
                     if (p.active) {
                         if (mensaje) {
                             mensaje.classList.remove("desactivado");
-                            padre=mensaje.parentElement;
                             padre.classList.add("activado")
                         }
                     } else {
-                        if (mensaje) {
-                            mensaje.classList.add("desactivado");
+                        if (p) {
+                            // mensaje.classList.add("desactivado");
+                            padre.classList.add("instalado");
                         }
                     }
                 }
@@ -31,7 +49,8 @@
         botonInstalar.addEventListener('click', async () => {
             let seleccionados = [...document.querySelectorAll('.pluginCheckbox:checked')].map(cb => cb.value);
             console.log("Seleccionados:", seleccionados);
-
+            mostrarLoader()
+            console.log(mostrarLoader)
             for (const slug of seleccionados) {
                 try {
                     console.log(`Instalando: ${slug}`);
@@ -41,14 +60,16 @@
                     console.error(`Error con ${slug}:`, err);
                 }
             }
-
+            ocultarLoader()
+            console.log(ocultarLoader)
             await activadoOno(todos);
+            location.reload();
         });
 
         botonActivar.addEventListener('click', async () => {
             let seleccionados = [...document.querySelectorAll('.pluginCheckbox:checked')].map(cb => cb.value);
             console.log("Seleccionados:", seleccionados);
-
+            mostrarLoader()
             for (const slug of seleccionados) {
                 try {
                     const pluginFile = await obtenerPluginFile(slug);
@@ -60,15 +81,16 @@
                     console.error(`Error con ${slug}:`, err);
                 }
             }
-
+            ocultarLoader()
             await activadoOno(todos);
+            location.reload();
         });
 
 
         botonDesinstalar.addEventListener('click', async () => {
             let seleccionados = [...document.querySelectorAll('.pluginCheckbox:checked')]
                 .map(cb => cb.value);
-
+            mostrarLoader()
             for (const slug of seleccionados) {
                 const pluginData = plugin.plugins.find(p => p.slug === slug);
 
@@ -85,8 +107,9 @@
                     console.error(`Error con ${slug}:`, err);
                 }
             }
-
+            ocultarLoader()
             await activadoOno(todos);
+            location.reload();
         });
 
         async function obtenerPluginFile(slug) {
@@ -223,3 +246,4 @@
                 cb.checked = false;
             });
         }
+    })

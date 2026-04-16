@@ -18,6 +18,69 @@ function ManagerPlugins_Display_Page() {
             --pi-danger: #ff5b5b;
             --pi-radius: 12px
         }
+        /* carga --------------------------------------------------------- */
+        *,*:before,*:after{
+            box-sizing: inherit;
+        }
+        .section_loader{
+            position: fixed;
+            left: 160px;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background-color: white;
+            z-index: 99;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .loader{
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+        .loader .loader1{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 8px solid darkorange;
+            border-bottom: none;
+            border-left: transparent;
+            border-radius: 50%;
+            animation: loader-1 1s cubic-bezier(0.42, 0.61, 0.58, 0.41) infinite;
+        }
+        .loader .loader2{
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 8px solid green;
+            border-top: none;
+            border-right: transparent;
+            border-radius: 50%;
+            left: calc(50% - 60px);
+            top: calc(50% - 60px);
+            animation: loader-1 1s cubic-bezier(0.42, 0.61, 0.58, 0.41) infinite;
+        }
+        .mostrarLoader{
+            display: flex;
+        }
+        @keyframes loader-1{
+            0%{
+                transform: rotate(0deg);
+            }
+            100%{
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes loader-2{
+            0%{
+                transform: rotate(0deg);
+            }
+            100%{
+                transform: rotate(360deg);
+            }
+        }
+        /* fin carga --------------------------------------------------------- */
         .tarjetaPlugin{
             display: flex;
             align-items: flex-start;
@@ -154,7 +217,12 @@ function ManagerPlugins_Display_Page() {
                     </div>
                 </div>
             </div>
-            
+            <div id="loaderPagina" class="section_loader">
+                <div class="loader">
+                    <div class="loader1"></div>
+                    <div class="loader2"></div>
+                </div>
+            </div>
             <?php
             foreach($plugins as $plugin){
                 ?>
