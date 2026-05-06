@@ -85,7 +85,13 @@ function getPlugins()
             'description' => 'Beginner friendly WordPress contact form plugin. Use our Drag & Drop form builder to create your WordPress forms.',             
             'category' => 'Contenido'
         ],
-                                  
+        [
+            'slug' => 'wordpress-seo',
+            'file' => 'wordpress-seo/wp-seo.php',                    
+            'name' => 'Yoast SEO',      
+            'description' => 'The first true all-in-one SEO solution for WordPress, including on-page content analysis, XML sitemaps and much more.',             
+            'category' => 'Seo'
+        ],                          
     ];
 }
 ?>
